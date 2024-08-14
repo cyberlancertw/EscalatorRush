@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Escalator simulator showing the difference in capacity and time between standing on one side only and standing on both sides. 顯示電扶梯只站單邊與雙邊站滿之容量與疏散時間差異的模擬器。">
+    <title>Simulator of escalator</title>
+    <link rel="stylesheet" href="./escalator.css" />
+</head>
+<body>
+    <div class="container">
+        <div id="divFunction">
+            <div id="divButton">
+                <button id="btnPlay" class="btn btn-blue"><svg class="icon" viewBox="0 0 900 900"><path d="M198.9 160l433 250a46.1 46.1 0 0 1 0 80l-433 250z" fill="currentColor"></path></svg><span>Go</span></button>
+                <button id="btnPause" class="btn btn-yellow"><svg class="icon" viewBox="0 0 900 900"><path d="M250 225l25 -25h50l25 25v450l-25 25h-50l-25 -25zM550 225l25 -25h50l25 25v450l-25 25h-50l-25 -25z" fill="currentColor"></path></svg><span>Pause</span></button>
+                <button id="btnReset" class="btn btn-orange"><svg class="icon" viewBox="0 0 900 900"><path d="M310 235L400 152A20 20 0 0 1 435 200L400 235H505A250 265 0 0 1 755 500A28 28 0 0 1 698 500A193 210 0 0 0 505 290H400L435 325A20 20 0 0 1 400 373L310 290A38 38 0 0 1 310 235zM590 665L500 748A20 20 0 0 1 465 700L500 665 H395A250 265 0 0 1 145 400A28 28 0 0 1 202 400A193 210 0 0 0 395 610H500L465 575A20 20 0 0 1 500 527L590 610A38 38 0 0 1 590 665z" fill="currentColor"></path></svg><span>Reset</span></button>
+            </div>
+            <div id="divRush">
+                <div>
+                    <svg id="iconRush" class="icon-big" viewBox="0 0 900 900">
+                        <rect x="0" y="0" rx="150" ry="150" width="900" height="900" fill="#636363"></rect>
+                        <path d="M650 10a100 100 0 0 1 0 200a100 100 0 0 1 0 -200M647 240L679 273L737 375L844 430A45 45 0 0 1 800 510L680 450L623 364L563 504L658 645V840A59 59 0 0 1 540 840V680L476 576H448L404 667L230 811A58 58 0 0 1 166 715L310 600L365 487V450L439 277L394 297L329 436A45 45 0 0 1 244 402L325 225L487 162L538 174A100 100 0 0 1 647 240zM250 480H90V520H250V480zM250 555H40V595H250V555zM341 43A90 60 0 0 0 255 19A24.6 26.5 0 0 0 285 61" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p>
+                        <label for="iptRush">Rush</label>
+                    </p>
+                    <p>
+                        <input type="number" id="iptRush" value="20" />
+                    </p>
+                </div>
+            </div>
+            <div id="divWalk">
+                <div>
+                    <svg id="iconWalk" class="icon-big" viewBox="0 0 900 900">
+                        <rect x="0" y="0" rx="150" ry="150" width="900" height="900" fill="#636363"></rect>
+                        <path d="M500 10a100 100 0 0 1 0 200a100 100 0 0 1 0 -200zM417 180A120 120 0 0 0 537 213L564 376L628 450A35 35 0 0 1 562 513L531 481L505 516L586 610L595 802A50 50  0 0 1 478 808L471 646L439 606L358 823A50 50 0 0 1 256 774L370 480V348L355 364V483A44 44 0 0 1 267 483V330z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p>
+                        <label for="iptWalk">Walk</label>
+                    </p>
+                    <p>
+                        <input type="number" id="iptWalk" value="30" />
+                    </p>
+                </div>
+            </div>
+            <div id="divTimer">
+                <span id="spnTimer">0.00</span>
+            </div>
+            <div id="divCounter1">
+                <div>
+                    <span>1-side Stand</span>
+                </div>
+                <svg width="110" height="20">
+                    <rect x="110" y="0" width="0" height="20" fill="#5bb5df" id="rectBar1"></rect>
+                    <text x="5" y="14" text-anchor="start" font-size="14" fill="#ffffff" id="txtTimer1"></text>
+                    <text x="105" y="14" text-anchor="end" font-size="14" fill="#000000" id="txtCounter1">0/0</text>
+                </svg>
+            </div>
+            <div id="divCounter2">
+                <div>
+                    <span>2-side Stand</span>
+                </div>
+                <svg width="110" height="20">
+                    <rect x="110" y="0" width="0" height="20" fill="#5bb5df" id="rectBar2"></rect>
+                    <text x="5" y="14" text-anchor="start" font-size="14" fill="#ffffff" id="txtTimer2"></text>
+                    <text x="105" y="14" text-anchor="end" font-size="14" fill="#000000" id="txtCounter2">0/0</text>
+                </svg>
+            </div>
+        </div>
+        <div id="divShow">
+            <div>
+                <svg id="svgRush" width="100%" height="200">
+                    <g id="g1_escalator"></g>
+                    <g id="g1_cover"></g>
+                    <g id="g1_people"></g>
+                </svg>
+            </div>
+            <div>
+                <svg id="svgWalk" width="100%" height="200">
+                    <g id="g2_escalator"></g>
+                    <g id="g2_cover"></g>
+                    <g id="g2_people"></g>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <script src="./escalator.js"></script>
+</body>
+</html>
