@@ -309,7 +309,6 @@ function QueueLandscape(person){
     }
 }
 
-
 const btnPlay = document.getElementById('btnPlay');
 const btnPause = document.getElementById('btnPause');
 const btnReset = document.getElementById('btnReset');
@@ -334,7 +333,7 @@ function BodyInit(){
     btnPause.addEventListener('click', BtnPauseClick);
     btnReset.setAttribute('disabled', true);
     btnReset.addEventListener('click', BtnResetClick);
-    window.addEventListener('orientationchange', WindowOrientationChange);
+    screen.orientation.addEventListener('change', ScreenOrientationChange);
     InitSetting();
     InitSvg();
 }
@@ -342,7 +341,8 @@ function BodyInit(){
 /**
  * 裝置旋轉的事件
  */
-function WindowOrientationChange(){
+function ScreenOrientationChange(e){
+    console.log(e);
     // 等同按下重置按鈕
     BtnResetClick();
     // 更新設定
@@ -414,8 +414,6 @@ function SequenceWalk(group, direction){
     }
 }
 
-
-
 /**
  * 橫向裝置的單人向前走
  * @param {Person} person 要向前走的人物物件
@@ -424,7 +422,6 @@ function RenderSequenceLandscape(person){
     const circle = document.getElementById(`p${person.group}_${person.groupIndex}`);
     circle.setAttribute('cx', person.position);
 }
-
 
 /**
  * 直立裝置的單人向前走
@@ -440,7 +437,7 @@ function RenderSequencePortrait(person){
  */
 function InitSetting(){
     // 是否為直立移動裝置
-    setting.isPortrait = (screen.availWidth < screen.availHeight) && screen.availWidth < 800;
+    setting.isPortrait = screen.orientation.type === 'portrait-primary';
     // FPS 每秒格數
     setting.framePerSecond = 60;
     // 每格多少毫秒
@@ -454,7 +451,7 @@ function InitSetting(){
         // 繪製區域的高度(直立時意義相反)
         setting.svgShowHeight = screen.availWidth;
         // 長度縮放比例
-        setting.scale = Math.min(70 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
+        setting.scale = Math.min(60 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
         // 人物的中心距離，直立時公式使用負數在 Person.IsApproach 裡就不用考慮絕對值了
         setting.personBarrier = - 0.19 * setting.scale * 2;
         // 速率校正用
@@ -474,7 +471,7 @@ function InitSetting(){
         // 人在階梯中走動的速度，直立時為由下往上走，y 座標遞減故為負數
         escalator.climbSpeed = - 1 * setting.scale / setting.framePerSecond,
         // 階梯進入點位置
-        escalator.checkPoint.position = setting.svgShowWidth - (setting.svgShowWidth - escalator.step.width * (escalator.step.count - 1)) / 2;
+        escalator.checkPoint.position = setting.svgShowWidth - (setting.svgShowWidth - escalator.step.width * (escalator.step.count - 1)) * 2 / 3;
         // 階梯進入點的邊距
         escalator.checkPoint.margin = (setting.svgShowHeight - escalator.step.height * 2 - escalator.handDrail.height * 4) / 3;
         // 階梯離開點位置
@@ -498,7 +495,7 @@ function InitSetting(){
         // 繪製區域的高度
         setting.svgShowHeight = screen.availHeight;
         // 長度縮放比例
-        setting.scale = Math.min(70 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
+        setting.scale = Math.min(60 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
         // 人物的中心距離
         setting.personBarrier = 0.19 * setting.scale * 2;
         // 速率校正用
@@ -625,10 +622,10 @@ function AppendHandDrailAndFloor(group){
     const margin = group === 1 ? escalator.checkPoint.margin : escalator.checkPoint.margin / 2;
     if (setting.isPortrait){
         // 左側扶手
-        AppendHandDrail(docFrag, margin, setting.svgShowWidth - escalator.checkPoint.position - escalator.step.width,
+        AppendHandDrail(docFrag, margin, escalator.checkPoint.position - escalator.step.width * escalator.step.count,
             escalator.handDrail.height, escalator.handDrail.width, escalator.handDrail.height * 0.5);
         // 右側扶手
-        AppendHandDrail(docFrag, margin + escalator.handDrail.height + escalator.step.height, setting.svgShowWidth - escalator.checkPoint.position - escalator.step.width,
+        AppendHandDrail(docFrag, margin + escalator.handDrail.height + escalator.step.height, escalator.checkPoint.position - escalator.step.width * escalator.step.count,
             escalator.handDrail.height, escalator.handDrail.width, escalator.handDrail.height * 0.5);
         // 進入前的地板
         AppendFloor(docFrag, margin + escalator.handDrail.height - 0.5, escalator.checkPoint.position, escalator.step.height + 1, escalator.step.width * 2);
