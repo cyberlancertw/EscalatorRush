@@ -341,8 +341,7 @@ function BodyInit(){
 /**
  * 裝置旋轉的事件
  */
-function ScreenOrientationChange(e){
-    console.log(e);
+function ScreenOrientationChange(){
     // 等同按下重置按鈕
     BtnResetClick();
     // 更新設定
@@ -436,8 +435,11 @@ function RenderSequencePortrait(person){
  * 設定更新
  */
 function InitSetting(){
+    try{
+
+    
     // 是否為直立移動裝置
-    setting.isPortrait = screen.orientation.type === 'portrait-primary';
+    setting.isPortrait = screen.orientation.type.indexOf('portrait') > -1;
     // FPS 每秒格數
     setting.framePerSecond = 60;
     // 每格多少毫秒
@@ -537,6 +539,10 @@ function InitSetting(){
     escalator.step.gap = (escalator.step.height - setting.personRadius * 4) / 3;
     // 階梯內黃線框的寬度
     escalator.step.border = 0.03 * setting.scale;
+    }
+    catch(e){
+        alert(e);
+    }
 }
 
 /**
