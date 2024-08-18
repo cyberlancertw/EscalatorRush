@@ -435,9 +435,6 @@ function RenderSequencePortrait(person){
  * 設定更新
  */
 function InitSetting(){
-    try{
-
-    
     // 是否為直立移動裝置
     setting.isPortrait = screen.orientation.type.indexOf('portrait') > -1;
     // FPS 每秒格數
@@ -449,9 +446,9 @@ function InitSetting(){
     // 直立裝置
     if (setting.isPortrait){
         // 繪製區域的寬度(直立時意義相反)
-        setting.svgShowWidth = screen.availHeight - setting.functionWidth;
+        setting.svgShowWidth = (screen.availHeight ? screen.availHeight : window.innerHeight) - setting.functionWidth;
         // 繪製區域的高度(直立時意義相反)
-        setting.svgShowHeight = screen.availWidth;
+        setting.svgShowHeight = screen.availWidth ? screen.availWidth : window.innerWidth;
         // 長度縮放比例
         setting.scale = Math.min(60 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
         // 人物的中心距離，直立時公式使用負數在 Person.IsApproach 裡就不用考慮絕對值了
@@ -493,9 +490,9 @@ function InitSetting(){
     // 橫向裝置
     else{
         // 繪製區域的寬度
-        setting.svgShowWidth = screen.availWidth - setting.functionWidth;
+        setting.svgShowWidth = (screen.availWidth ? screen.availWidth : window.innerWidth) - setting.functionWidth;
         // 繪製區域的高度
-        setting.svgShowHeight = screen.availHeight;
+        setting.svgShowHeight = (screen.availHeight ? screen.availHeight : window.innerHeight) * 2 / 3;
         // 長度縮放比例
         setting.scale = Math.min(60 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
         // 人物的中心距離
@@ -539,10 +536,6 @@ function InitSetting(){
     escalator.step.gap = (escalator.step.height - setting.personRadius * 4) / 3;
     // 階梯內黃線框的寬度
     escalator.step.border = 0.03 * setting.scale;
-    }
-    catch(e){
-        alert(e);
-    }
 }
 
 /**
