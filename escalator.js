@@ -536,6 +536,7 @@ function InitSetting(){
     escalator.step.gap = (escalator.step.height - setting.personRadius * 4) / 3;
     // 階梯內黃線框的寬度
     escalator.step.border = 0.03 * setting.scale;
+    document.getElementById('txtDebug').textContent = JSON.stringify(setting);
 }
 
 /**
