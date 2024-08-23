@@ -13,6 +13,9 @@ const sequence2L = [];
 const sequence2R = [];
 
 const setting = {
+    // FPS 每秒格數
+    framePerSecond: 60,
+    // 功能欄佔用寬度
     functionWidth: 118
 };
 
@@ -38,7 +41,10 @@ const counter = {
 const escalator = {
     checkPoint: {},
     handDrail: {},
-    step: {}
+    step: {
+        // 階梯數量
+        count: 16
+    }
 };
 const animation = {
     // true 時可播放動畫。false 停止播放
@@ -333,7 +339,18 @@ function BodyInit(){
     btnPause.addEventListener('click', BtnPauseClick);
     btnReset.setAttribute('disabled', true);
     btnReset.addEventListener('click', BtnResetClick);
-    screen.orientation.addEventListener('change', ScreenOrientationChange);
+    if (screen.orientation){
+        setting.isPortrait = screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary';
+        screen.orientation.addEventListener('change', ScreenOrientationChange);
+    }
+    else if (window.orientation){
+        setting.isPortrait = window.matchMedia('(orientation: portrait)').matches;
+        window.addEventListener('orientationchange', WindowOrientationChange);
+    }
+    else{
+        setting.isPortrait = window.matchMedia('(orientation: portrait)').matches;
+        window.addEventListener('resize', WindowResize);
+    }
     InitSetting();
     InitSvg();
 }
@@ -342,6 +359,42 @@ function BodyInit(){
  * 裝置旋轉的事件
  */
 function ScreenOrientationChange(){
+    // 等同按下重置按鈕
+    BtnResetClick();
+    // 是否為直立移動裝置
+    setting.isPortrait = screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary';
+    // 更新設定
+    InitSetting();
+    // 以新的螢幕長寬來重繪階梯、扶手地板
+    InitSvg();
+}
+
+/**
+ * 棄用的裝置旋轉的事件
+ */
+function WindowOrientationChange(){
+    // 等同按下重置按鈕
+    BtnResetClick();
+    // 是否為直立移動裝置
+    setting.isPortrait = window.matchMedia('(orientation: portrait)').matches;
+    // 更新設定
+    InitSetting();
+    // 以新的螢幕長寬來重繪階梯、扶手地板
+    InitSvg();
+}
+
+/**
+ * 通用的裝置縮放的事件
+ */
+function WindowResize(){
+    // 取目前的旋轉狀態
+    const isPortraitNow = window.matchMedia('(orientation: portrait)').matches;
+    // 有旋轉才往下做
+    if (setting.isPortrait === isPortraitNow){
+        return;
+    }
+    // 是否為直立移動裝置
+    setting.isPortrait = isPortraitNow;
     // 等同按下重置按鈕
     BtnResetClick();
     // 更新設定
@@ -435,20 +488,20 @@ function RenderSequencePortrait(person){
  * 設定更新
  */
 function InitSetting(){
-    // 是否為直立移動裝置
-    setting.isPortrait = screen.orientation.type.indexOf('portrait') > -1;
-    // FPS 每秒格數
-    setting.framePerSecond = 60;
+
     // 每格多少毫秒
     setting.milliSecondPerFrame = 1000 / setting.framePerSecond;
-    // 階梯數量
-    escalator.step.count = 16;
+
+    // 繪製區域的寬度(直立時意義相反)
+    setting.svgShowWidth = Math.max(window.innerWidth, window.innerHeight) - setting.functionWidth;
+    // 繪製區域的高度(直立時意義相反)
+    setting.svgShowHeight = Math.min(window.innerWidth, window.innerHeight);
     // 直立裝置
     if (setting.isPortrait){
         // 繪製區域的寬度(直立時意義相反)
-        setting.svgShowWidth = (screen.availHeight ? screen.availHeight : window.innerHeight) - setting.functionWidth;
+        //setting.svgShowWidth = (screen.availHeight ? screen.availHeight : window.innerHeight) - setting.functionWidth;
         // 繪製區域的高度(直立時意義相反)
-        setting.svgShowHeight = screen.availWidth ? screen.availWidth : window.innerWidth;
+        //setting.svgShowHeight = screen.availWidth ? screen.availWidth : window.innerWidth;
         // 長度縮放比例
         setting.scale = Math.min(60 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
         // 人物的中心距離，直立時公式使用負數在 Person.IsApproach 裡就不用考慮絕對值了
@@ -490,9 +543,9 @@ function InitSetting(){
     // 橫向裝置
     else{
         // 繪製區域的寬度
-        setting.svgShowWidth = (screen.availWidth ? screen.availWidth : window.innerWidth) - setting.functionWidth;
+        //setting.svgShowWidth = (screen.availWidth ? screen.availWidth : window.innerWidth) - setting.functionWidth;
         // 繪製區域的高度
-        setting.svgShowHeight = (screen.availHeight ? screen.availHeight : window.innerHeight) * 2 / 3;
+        //setting.svgShowHeight = (screen.availHeight ? screen.availHeight : window.innerHeight) * 2 / 3;
         // 長度縮放比例
         setting.scale = Math.min(60 + (setting.svgShowWidth - 700) / 10, setting.svgShowHeight / 3);
         // 人物的中心距離
@@ -536,7 +589,8 @@ function InitSetting(){
     escalator.step.gap = (escalator.step.height - setting.personRadius * 4) / 3;
     // 階梯內黃線框的寬度
     escalator.step.border = 0.03 * setting.scale;
-    document.getElementById('txtDebug').textContent = JSON.stringify(setting);
+    // debug 用
+    //document.getElementById('txtDebug').textContent = JSON.stringify(setting);
 }
 
 /**
